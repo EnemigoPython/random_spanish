@@ -21,7 +21,7 @@ def main():
     while user.lower() not in ("start", "s") or not word_count:
         if word_count:
             user = input("'[S]tart' to begin the program, '[A]ll' for list of all settings.\n")
-            if user.lower() == 'all' or user.lower() == 'a':
+            if user.lower() in ('all', 'a'):
                 print("""
 '[B]asic' to allow/disallow super common words like 'the'. (default disallowed)
 '[D]irection' for translation direction. (default: Spanish to English)
