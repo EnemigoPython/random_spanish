@@ -5,7 +5,7 @@ import random
 
 def main():
     user = input("Number of words to revise? (1-200 limits) \n")
-    word_count = int(user) if user.isnumeric() and 200 >= int(user) >= 0 else None
+    word_count = int(user) if user.isnumeric() and 200 > int(user) >= 0 else None
 
     min_length = 0
     max_length = 100
