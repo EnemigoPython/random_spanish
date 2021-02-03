@@ -115,18 +115,21 @@ def main():
 
     score = 0
     for e, word in enumerate(_dict, start=1):
-        if example_sentence:
-            print(sentence_dict[word])
-        prompt, answer = _dict[word] if to_English else word, word if to_English else _dict[word]
-        user = input(f'{e}) ' + prompt + (f' ({source_dict[word]}):\n' if print_source else ':\n'))
-        print(f'{answer} - {"correct" if user.lower() == answer else "incorrect"}\n')
-        if user.lower() != answer:
-            user = input("Type 'x' to mark as correct, or enter any key.\n")
-        if user.lower() == 'x' or user.lower() == answer:
-            score += 1
-            if note_correct:
-                with open('correct.txt', 'a') as f:
-                    f.write('\n' + word)
+        try:
+            if example_sentence:
+                print(sentence_dict[word])
+            prompt, answer = _dict[word] if to_English else word, word if to_English else _dict[word]
+            user = input(f'{e}) ' + prompt + (f' ({source_dict[word]}):\n' if print_source else ':\n'))
+            print(f'{answer} - {"correct" if user.lower() == answer else "incorrect"}\n')
+            if user.lower() != answer:
+                user = input("Type 'x' to mark as correct, or enter any key.\n")
+            if user.lower() == 'x' or user.lower() == answer:
+                score += 1
+                if note_correct:
+                    with open('correct.txt', 'a') as f:
+                        f.write('\n' + word)
+        except KeyError:
+            continue
 
     print(f"{score} out of {len(_dict)} - {int(score / len(_dict) * 100)}%")
 
