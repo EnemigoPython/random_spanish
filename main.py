@@ -100,7 +100,7 @@ def main():
             word = driver.find_element_by_class_name("_1xnuU6l-").text
             if word in list(_dict.keys()) + basic_words:
                 continue
-            _dict.update({word: translation[1:] if len(translation) > 1 and translation[0] in ('el', 'la', 'los', 'las',
+            _dict.update({word: translation[1] if len(translation) > 1 and translation[0] in ('el', 'la', 'los', 'las',
                   'el/la', 'los/las') else ' '.join(translation)})
             if example_sentence:
                 English = driver.find_element_by_class_name("_1f2Xuesa").text
