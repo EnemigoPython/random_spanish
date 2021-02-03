@@ -31,6 +31,6 @@ correct.txt - as you correctly translate words, you are given the option to avoi
 
 [R]eset: empty correct.txt
 
->: set maximum word length
+'>': set maximum word length
 
-<: set minimum word length
+'<': set minimum word length
