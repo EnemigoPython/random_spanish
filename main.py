@@ -96,7 +96,6 @@ def main():
         page_soup = new_soup("https://en.wikipedia.org/wiki/Special:Random")
         while header == page_soup.find(id='firstHeading').text:
             pass
-        # header = driver.find_element_by_id('firstHeading').text
         header = page_soup.find(id='firstHeading').text
         try:
             ps = page_soup.findAll('p')
