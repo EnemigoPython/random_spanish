@@ -1,6 +1,14 @@
-from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from bs4 import BeautifulSoup as soup
+from urllib.request import urlopen
 import random
+
+
+def new_soup(url):
+    client = urlopen(url)
+    html_page = client.read()
+    client.close()
+    page_soup = soup(html_page, "html.parser")
+    return page_soup
 
 
 def main():
@@ -81,37 +89,34 @@ def main():
     else:
         revised = []
 
-    PATH = "C:\Program Files (x86)\chromedriver.exe"
-    driver = webdriver.Chrome(PATH)
     header = ''
     found_words = 0
     while found_words < word_count:
-        driver.get("https://en.wikipedia.org/wiki/Special:Random")
-        while header == driver.find_element_by_id('firstHeading').text:
+        page_soup = new_soup("https://en.wikipedia.org/wiki/Special:Random")
+        while header == page_soup.find(id='firstHeading').text:
             pass
-        header = driver.find_element_by_id('firstHeading').text
+        # header = driver.find_element_by_id('firstHeading').text
+        header = page_soup.find(id='firstHeading').text
         try:
-            ps = driver.find_elements_by_tag_name('p')
+            ps = page_soup.findAll('p')
             p = random.choice([p for p in ps if p]).text.split(' ')
             word = random.choice([w for w in p if w and w == w.lower() and w.isalpha() and w not in _dict.keys() and w
                   not in basic_words + revised and all(ord(c) < 128 for c in w) and max_length >= len(w) >= min_length])
-            driver.get(f"https://www.spanishdict.com/translate/{word}")
-            translation = driver.find_element_by_id("quickdef1-en").text.split(' ')
-            word = driver.find_element_by_class_name("_1xnuU6l-").text
+            page_soup = new_soup(f"https://www.spanishdict.com/translate/{word}")
+            translation = page_soup.find(id="quickdef1-en").text.split(' ')
+            word = page_soup.find(class_="_1xnuU6l-").text
             if word in list(_dict.keys()) + basic_words:
                 continue
             _dict.update({word: translation[1] if len(translation) > 1 and translation[0] in ('el', 'la', 'los', 'las',
                   'el/la', 'los/las') else ' '.join(translation)})
             if example_sentence:
-                English = driver.find_element_by_class_name("_1f2Xuesa").text
-                Spanish = driver.find_element_by_class_name("_3WrcYAGx").text
+                English = page_soup.find(class_="_1f2Xuesa").text
+                Spanish = page_soup.find(class_="_3WrcYAGx").text
                 sentence_dict.update({word: Spanish if to_English else English})
             source_dict.update({word: header})
             found_words += 1
-        except (IndexError, NoSuchElementException):
+        except (IndexError, AttributeError):
             pass
-
-    driver.quit()
 
     score = 0
     for e, word in enumerate(_dict, start=1):
