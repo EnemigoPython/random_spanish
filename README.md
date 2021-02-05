@@ -12,7 +12,9 @@ SpanishDict to translate the words into Spanish
 # REQUIREMENTS
 Python 3.9
 
-Selenium (change PATH variable to your own remote web driver in main.py)
+BS4
+
+Urllib
 
 # FILES
 main.py - executable file
