@@ -22,6 +22,7 @@ def main():
     example_sentence = True
     note_correct = True
     print_source = False
+    save_incorrect = True
     _dict = {}
     sentence_dict = {}
     source_dict = {}
@@ -34,9 +35,10 @@ def main():
 '[B]asic' to allow/disallow super common words like 'the'. (default disallowed)
 '[D]irection' for translation direction. (default: Spanish to English)
 '[E]xample for an example sentence using the word. (default enabled)
+'[I]ncorrect' to save words answered incorrectly to incorrect.txt. (default enabled)
 '[N]ote to note correctly answered words & prevent their repetition. (default enabled)
 '[P]rint' to print the Wiki page along with the word. (default disabled)
-'[R]eset' to reset correct.txt.
+'[R]eset' to reset correct.txt & incorrect.txt.
 '>' to set a minimum word length. (default none, max 15)
 '<' to set a maximum word length. (default 100, min 3)
                         """)
@@ -49,6 +51,9 @@ def main():
             if user.lower() in ('example', 'e'):
                 example_sentence = not example_sentence
                 print(f"Example sentence: {'on' if example_sentence else 'off'}.\n")
+            if user.lower() in ('incorrect', 'i'):
+                save_incorrect = not save_incorrect
+                print(f"Save incorrect answers: {'on' if save_incorrect else 'off'}.\n")
             if user.lower() in ('note', 'n'):
                 note_correct = not note_correct
                 print(f"Note correctly answered: {'on' if note_correct else 'off'}.\n")
@@ -57,7 +62,8 @@ def main():
                 print(f"Print wiki source: {'on' if print_source else 'off'}.\n")
             if user.lower() in ('reset', 'r'):
                 open('correct.txt', 'w').close()
-                print("File reset.\n")
+                open('incorrect.txt', 'w').close()
+                print("Files reset.\n")
             if user == '>':
                 user = input("Set minimum word length:\n")
                 if user.isnumeric() and max_length > min_length and 15 >= int(user) >= 0:
@@ -88,10 +94,27 @@ def main():
             revised = f.read().splitlines()[1:]
     else:
         revised = []
+    if save_incorrect:
+        with open('incorrect.txt', 'r') as f:
+            repeat = f.read().splitlines()[1:]
+    else:
+        repeat = []
 
     header = ''
     found_words = 0
     print("Working...\n")
+    for word in repeat[:min(word_count, len(repeat))]:
+        page_soup = new_soup(f"https://www.spanishdict.com/translate/{word}")
+        translation = page_soup.find(id="quickdef1-en").text.split(' ')
+        _dict.update({word: translation[1] if len(translation) > 1 and translation[0] in ('el', 'la', 'los', 'las',
+              'el/la', 'los/las') else ' '.join(translation)})
+        source_dict.update({word: header})
+        found_words += 1
+        if example_sentence:
+            English = page_soup.find(class_="_1f2Xuesa").text
+            Spanish = page_soup.find(class_="_3WrcYAGx").text
+            sentence_dict.update({word: Spanish if to_English else English})
+        print(f'{found_words}/{word_count}')
     while found_words < word_count:
         page_soup = new_soup("https://en.wikipedia.org/wiki/Special:Random")
         while header == page_soup.find(id='firstHeading').text:
@@ -135,6 +158,14 @@ def main():
                 if note_correct:
                     with open('correct.txt', 'a') as f:
                         f.write('\n' + word)
+                if save_incorrect and word in repeat:
+                    repeat.remove(word)
+                    with open('incorrect.txt', 'w') as f:
+                        for w in repeat:
+                            f.write('\n' + w)
+            elif save_incorrect:
+                with open('incorrect.txt', 'a') as f:
+                    f.write('\n' + word)
         except KeyError:
             continue
 
