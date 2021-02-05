@@ -1,5 +1,8 @@
 # random_spanish
-Using Selenium, generates a set of words to study by translating to and from English and Spanish.
+Using ~~Selenium~~ BeautifulSoup4, generates a set of words to study by translating to and from English and Spanish.
+
+# NEW BRANCH
+I decided for multiple reasons that BS4 might be a better fit for this project, but I will maintain the two models separate. This way there is no need for a driver, which is not necessary in any case.
 
 # SITES SCRAPED
 Wikipedia (en) random article feature to source words
