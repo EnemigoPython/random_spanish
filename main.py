@@ -91,6 +91,7 @@ def main():
 
     header = ''
     found_words = 0
+    print("Working...\n")
     while found_words < word_count:
         page_soup = new_soup("https://en.wikipedia.org/wiki/Special:Random")
         while header == page_soup.find(id='firstHeading').text:
@@ -115,9 +116,11 @@ def main():
                 sentence_dict.update({word: Spanish if to_English else English})
             source_dict.update({word: header})
             found_words += 1
+            print(f'{found_words}/{word_count}')
         except (IndexError, AttributeError):
             pass
 
+    print("\nFinished\n")
     score = 0
     for e, word in enumerate(_dict, start=1):
         try:
