@@ -109,12 +109,12 @@ def main():
                 continue
             _dict.update({word: translation[1] if len(translation) > 1 and translation[0] in ('el', 'la', 'los', 'las',
                   'el/la', 'los/las') else ' '.join(translation)})
+            source_dict.update({word: header})
+            found_words += 1
             if example_sentence:
                 English = page_soup.find(class_="_1f2Xuesa").text
                 Spanish = page_soup.find(class_="_3WrcYAGx").text
                 sentence_dict.update({word: Spanish if to_English else English})
-            source_dict.update({word: header})
-            found_words += 1
             print(f'{found_words}/{word_count}')
         except (IndexError, AttributeError):
             pass
