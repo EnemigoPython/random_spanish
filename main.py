@@ -109,11 +109,11 @@ def main():
         _dict.update({word: translation[1] if len(translation) > 1 and translation[0] in ('el', 'la', 'los', 'las',
               'el/la', 'los/las') else ' '.join(translation)})
         source_dict.update({word: header})
-        found_words += 1
         if example_sentence:
             English = page_soup.find(class_="_1f2Xuesa").text
             Spanish = page_soup.find(class_="_3WrcYAGx").text
             sentence_dict.update({word: Spanish if to_English else English})
+        found_words += 1
         print(f'{found_words}/{word_count}')
     while found_words < word_count:
         page_soup = new_soup("https://en.wikipedia.org/wiki/Special:Random")
@@ -163,7 +163,7 @@ def main():
                     with open('incorrect.txt', 'w') as f:
                         for w in repeat:
                             f.write('\n' + w)
-            elif save_incorrect:
+            elif save_incorrect and word not in repeat:
                 with open('incorrect.txt', 'a') as f:
                     f.write('\n' + word)
         except KeyError:
